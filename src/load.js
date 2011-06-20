@@ -175,8 +175,10 @@
             script = {};
             script.url = url.url;
             if (url.name) {
-              script.name = url.name;
-            }
+				script.name = url.name;
+            } else {
+				script.name = toLabel(url.url);
+			}
             if (url.charset) script.charset = url.charset;
         } else {
             script = { name: toLabel(url),  url: url };
@@ -236,7 +238,7 @@
             script.state = PRELOADING;
             script.onpreload = [];
 
-            scriptTag({ src: script.url, type: 'cache'}, function()  {
+            scriptTag( script, { type: 'cache' }, function()  {
                 onPreload(script);
             });
         }
@@ -260,7 +262,7 @@
 
         script.state = LOADING;
 
-        scriptTag(script.url, function() {
+        scriptTag(script, function() {
 
             script.state = LOADED;
 
@@ -280,16 +282,17 @@
         });
     }
 
-
-    function scriptTag(src, callback) {
-
+    function scriptTag(src, options, callback) {
+		if (isFunc(options)) {
+			callback = options;
+		}
         var s = doc.createElement('script');
-        s.type = 'text/' + (src.type || 'javascript');
+        s.type = 'text/' + (options.type || 'javascript');
         if (src.charset)
         {
             s.charset = src.charset;    
         }
-        s.src = src.src || src;
+        s.src = src.url;
         s.async = false;
 
         s.onreadystatechange = s.onload = function() {
@@ -388,4 +391,3 @@
     }, 300);
 
 })(document);
-
