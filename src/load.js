@@ -172,11 +172,12 @@
         var script;
 
         if (typeof url == 'object') {
-            for (var key in url) {
-                if (url[key]) {
-                    script = { name: key, url: url[key] };
-                }
+            script = {};
+            script.url = url.url;
+            if (url.name) {
+              script.name = url.name;
             }
+            if (url.charset) script.charset = url.charset;
         } else {
             script = { name: toLabel(url),  url: url };
         }
@@ -284,6 +285,10 @@
 
         var s = doc.createElement('script');
         s.type = 'text/' + (src.type || 'javascript');
+        if (src.charset)
+        {
+            s.charset = src.charset;    
+        }
         s.src = src.src || src;
         s.async = false;
 
